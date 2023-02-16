@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/Style.css?version=42">
+    <title>Spis reklamacji</title>
+</head>
+<body>
+
+<table class="optionstable" style="table-layout: fixed; width: 90%">
+  <colgroup>
+    <col style="width: 33%">
+    <col style="width: 33%">
+    <col style="width: 33%">
+  </colgroup>
+  <tbody>
+  <tr>
+    <td><button class="exitbutton" onclick="window.location.href='/catalog/'">Wyjście</button></td>
+    <td style="background: linear-gradient(transparent, white, transparent);"><h1>Spis reklamacji</h1></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+
+<table class="filtertable" style="table-layout: fixed; width: 1704px">
+  <colgroup>
+    <col style="width: 201px">
+    <col style="width: 301px">
+    <col style="width: 401px">
+    <col style="width: 251px">
+  </colgroup>
+  <tbody>
+  <tr>
+    <td class="tg-title">Filtruj</td>
+    <td class="tg-filter">Data od: <input id="date1" style="font-size: 28px" name="date1" type="date" onchange="myFunction()"> </td>
+    <td class="tg-filter">Data do: <input id="date2" style="font-size: 28px" name="date2" type="date" onchange="myFunction()"> </td>
+    <td class="tg-filter">Stan:
+      <select id="state" style="font-size: 28px" name="state" onchange="myFunction()">
+        <option></option>
+        <option th:each="state : ${compliantStatesList}" th:text="${state.getStateName()}"></option>
+<!--        <option></option>-->
+<!--        <option>Oczekująca</option>-->
+<!--        <option>Odrzucona</option>-->
+<!--        <option>Zaakceptowana</option>-->
+      </select></td>
+  </tr>
+  <tr>
+    <td class="tg-content" colspan="4">
+      <table id="myTable" class="table" style="table-layout: fixed; width: 1605px">
+        <colgroup>
+          <col style="width: 101px">
+          <col style="width: 501px">
+          <col style="width: 301px">
+          <col style="width: 301px">
+          <col style="width: 201px">
+          <col style="width: 0; display: none">
+        </colgroup>
+        <tbody>
+        <tr>
+          <th>ID</th>
+          <th>Reklamujący</th>
+          <th>Data reklamacji</th>
+          <th>Data rozpatrzenia</th>
+          <th>Stan</th>
+          <th style="width: 0; display: none"></th>
+        </tr>
+
+        <tr th:each="complaint: ${complaintList}" th:onclick="|window.location.href='@{/complaint(id=${complaint.getId()})}'|">
+          <td th:text="${complaint.getId()}">1</td>
+          <td th:text="${complaint.client.getFullName()}">Jan Kowalski</td>
+          <td th:text="${complaint.getDateOfComplaintPlacement_ddmmyyyy()}"><time datetime="2022--12-10">
+            10-12-2022
+          </time></td>
+          <td th:text="${complaint.getDateOfComplaintHandling_ddmmyyyy()}"></td>
+          <td th:text="${complaint.complaintState.getStateName()}">nierozpatrzona</td>
+          <td style="width: 0; display: none" th:text="${complaint.getDateOfComplaintPlacementShort()}"></td>
+        </tr>
+<!--        <tr onclick="window.location='VReklamacja.html';">-->
+<!--          <td>1</td>-->
+<!--          <td>Jan Kowalski</td>-->
+<!--          <td>10-12-2022</td>-->
+<!--          <td></td>-->
+<!--          <td>nierozpatrzona</td>-->
+<!--        </tr>-->
+        </tbody>
+      </table>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<script>
+  function myFunction() {
+    var input1, input2, input3, table, tr, td, i;
+    input1 = document.getElementById("date1").value;
+    input2 = document.getElementById("date2").value;
+    input3 = document.getElementById("state").value;
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+
+    var txtValue;
+    for (i = 1; i < tr.length; i++) {
+      var toDisplay = true;
+      td = tr[i].getElementsByTagName("td")[5];
+      txtValue = td.textContent || td.innerText;
+      if (input1) {
+        if(td && txtValue < input1) {
+          toDisplay = false;
+        }
+      }
+      if (input2) {
+        if(td && txtValue > input2) {
+          toDisplay = false;
+        }
+      }
+      if (input3) {
+        td = tr[i].getElementsByTagName("td")[4];
+        txtValue = td.textContent || td.innerText;
+        if (td && txtValue !== input3) {
+          toDisplay = false;
+        }
+      }
+      if (toDisplay) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

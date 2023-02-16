@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/Style.css?version=42">
+    <title>Katalogiem</title>
+</head>
+<body>
+
+<table class="optionstable" style="table-layout: fixed; width: 90%">
+  <colgroup>
+    <col style="width: 33%">
+    <col style="width: 33%">
+    <col style="width: 33%">
+  </colgroup>
+  <tbody>
+  <tr>
+    <td><button class="exitbutton" onclick="window.location.href='/complaints/'">Wyjście</button></td>
+    <td style="background: linear-gradient(transparent, white, transparent);"><h1>Zarządzanie katalogiem</h1></td>
+    <td><button class="rightbutton" style="width: 275px" onclick="window.location.href='/catalog/newbook'">Dodaj książkę</button></td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="centerside">
+    <table id="myTable" class="table" style="table-layout: fixed; width: 1690px">
+        <colgroup>
+            <col style="width: 80px">
+            <col style="width: 500px">
+            <col style="width: 250px">
+            <col style="width: 300px">
+            <col style="width: 150px">
+            <col style="width: 150px">
+            <col style="width: 75px">
+        </colgroup>
+        <tbody>
+        <tr>
+            <th>ID</th>
+            <th>Tytuł</th>
+            <th>Kategorie</th>
+            <th>Autorzy</th>
+            <th>Dostępność</th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr th:each="book: ${books}">
+            <td th:onclick="|window.location.href='@{/catalog/book(id=${book.getId()})}'|" th:text="${book.getId()}">1</td>
+            <td th:onclick="|window.location.href='@{/catalog/book(id=${book.getId()})}'|" th:text="${book.getTitle()}">Autostopem przez Galaktykę</td>
+<!--            <td th:onclick="|window.location.href='@{/catalog/book(id=${book.getId()})}'|" th:text="${book.getCategoriesAsString()}">sci-fi</td>-->
+<!--            <td th:onclick="|window.location.href='@{/catalog/book(id=${book.getId()})}'|" th:text="${book.getAuthorsAsString()}">Douglas Adams</td>-->
+            <td th:onclick="|window.location.href='@{/catalog/book(id=${book.getId()})}'|"><p style="margin-top: 0; margin-bottom: 0" th:each="category: ${book.getCategory_bookList()}" th:text="${category.getCategoryInCategory_Book().getCategoryName()}"></p></td>
+            <td th:onclick="|window.location.href='@{/catalog/book(id=${book.getId()})}'|"><p style="margin-top: 0; margin-bottom: 0" th:each="author: ${book.getAuthor_bookList()}" th:text="${author.getAuthorInAuthor_Book().getFullName()}"></p></td>
+            <td th:onclick="|window.location.href='@{/catalog/book(id=${book.getId()})}'|" th:text="${book.getAvailability()}">124</td>
+            <td><button class="informbutton" th:onclick="|accessibility('${book.getId()}','${book.getAvailability()}')|">dostępność</button></td>
+            <td><button class="informbutton" th:onclick="|remove('${book.getId()}')|">usuń</button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="overlay" id="removeWindow">
+    <div class="wrapper">
+        <h2>Powód odrzucenia</h2>
+        <a class="close" onclick="closeWindow('removeWindow')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px;">Czy na pewno chcesz usunąć tę książkę z katalogu? Książka zostanie wycofana ze sprzedaży.<br>
+                Operacja jest nieodwracalna!</p>
+            <button class="rightbutton" onclick="closeWindow('removeWindow'); openWindow('removeNotDone')">Anuluj</button>
+            <button class="rightbutton ok" onclick="removeOK()">OK</button>
+        </div>
+    </div>
+</div>
+<div class="overlay" id="removeNotDone">
+    <div class="wrapper">
+        <h2>Anulowano usunięcie</h2>
+        <a class="close" onclick="closeWindow('removeNotDone')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px;">Operacja została anulowana.<br>Książka nie została usunięta z katalogu.</p>
+            <button class="rightbutton ok" onclick="closeWindow('removeNotDone')">OK</button>
+        </div>
+    </div>
+</div>
+<div class="overlay" id="removeDone" style="visibility: visible; opacity: 1" th:if="${operation} == 1">
+    <div class="wrapper">
+        <h2>Zakończono usunięcie</h2>
+        <a class="close" onclick="closeWindow('removeDone')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px;">Operacja została zakończona.<br>Książka została usunięta z katalogu i wycofana z oferty.</p>
+            <button class="rightbutton ok" onclick="closeWindow('removeDone')">OK</button>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="accessibilityWindow">
+    <div class="wrapper">
+        <h2>Modyfikacja dostępności</h2>
+        <a class="close" onclick="closeWindow('accessibilityWindow')">&times;</a>
+        <div class="content">
+            <table class="datatable" style="table-layout: fixed; width: 80%">
+                <colgroup>
+                    <col style="width: 60%">
+                    <col style="width: 50%">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td rowspan="2">
+                        <h2>Zmień dane</h2>
+
+                        <form id="availability" method="post" action="#" th:action="@{/catalog/catalogAvailability}" th:object="${availability}">
+                            <input id="availabilityId" type="hidden" th:field="*{id}">
+                            <input class="numberInput" type="number" id="accessibilityNumber" th:field="*{availability}">
+                        </form>
+
+                    </td>
+                    <td><button class="rightbutton" onclick="add()">+ Dodaj</button></td>
+                </tr>
+                <tr>
+                    <td><button class="rightbutton" onclick="take()">- Zabierz</button></td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="rightbutton" onclick="changeNotOK()">Anuluj</button>
+            <button class="rightbutton ok" onclick="changeOK()">OK</button>
+        </div>
+    </div>
+</div>
+<div class="overlay" id="accessibilityAddOrRemove">
+    <div class="wrapper">
+        <h2 id="giveOrTakeTitle">Modyfikacja dostępności</h2>
+        <a class="close" onclick="closeWindow('accessibilityAddOrRemove'); openWindow('accessibilityWindow')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px; text-align: center" id="giveOrTake"></p>
+            <input class="numberInput" style="width: 97%" type="number" id="accessibilityGiveOrTakeNumber">
+            <button class="rightbutton ok" onclick="validate()">OK</button>
+        </div>
+    </div>
+</div>
+<div class="overlay" id="errorWindow">
+    <div class="wrapper">
+        <h2>Błędna wartość</h2>
+        <a class="close" onclick="closeWindow('errorWindow'); openWindow('accessibilityWindow')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px;">Podana wartość jest niepoprawna!<br>Dostępność nie została zmieniona.</p>
+            <button class="rightbutton ok" onclick="closeWindow('errorWindow'); openWindow('accessibilityWindow')">OK</button>
+        </div>
+    </div>
+</div>
+<!--<div class="overlay" id="accessibilityWindowEnd" style="visibility: visible; opacity: 1" th:if="${operation} == 5">-->
+<!--    <div class="wrapper">-->
+<!--        <h2 id="accessibilityTitle"></h2>-->
+<!--        <a class="close" onclick="closeWindow('accessibilityWindowEnd')">&times;</a>-->
+<!--        <div class="content">-->
+<!--            <p id="accessibilityAlert" style="font-size: 30px;"></p>-->
+<!--            <button class="rightbutton" onclick="closeWindow('accessibilityWindowEnd')">OK</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<div class="overlay" id="accessibilityChanged" style="visibility: visible; opacity: 1" th:if="${operation} == 5">
+    <div class="wrapper">
+        <h2>Zakończono modyfikację dostępności</h2>
+        <a class="close" onclick="closeWindow('accessibilityChanged')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px;">Operacja została zakończona.<br>Dostępność została zmieniona.</p>
+            <button class="rightbutton" onclick="closeWindow('accessibilityChanged')">OK</button>
+        </div>
+    </div>
+</div>
+<div class="overlay" id="accessibilityNotChanged">
+    <div class="wrapper">
+        <h2>Anulowano modyfikację dostępności</h2>
+        <a class="close" onclick="closeWindow('accessibilityNotChanged')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px;">Operacja została anulowana.<br>Dostępność nie została zmieniona.</p>
+            <button class="rightbutton" onclick="closeWindow('accessibilityNotChanged')">OK</button>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="addingDone" style="visibility: visible; opacity: 1" th:if="${operation} == 3">
+    <div class="wrapper">
+        <h2>Zakończono dodawanie</h2>
+        <a class="close" onclick="closeWindow('addingDone')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px;">Operacja została zakończona.<br>Książka została dodana do oferty.</p>
+            <button class="rightbutton" onclick="closeWindow('addingDone')">OK</button>
+        </div>
+    </div>
+</div>
+<div class="overlay" id="addingNotDone" style="visibility: visible; opacity: 1" th:if="${operation} == 4">
+    <div class="wrapper">
+        <h2>Anulowano dodawanie</h2>
+        <a class="close" onclick="closeWindow('addingNotDone')">&times;</a>
+        <div class="content">
+            <p style="font-size: 30px;">Operacja została anulowana.<br>Książka nie została stworzona.</p>
+            <button class="rightbutton" onclick="closeWindow('addingNotDone')">OK</button>
+        </div>
+    </div>
+</div>
+<input type="hidden" th:value="${operation}" id="operation">
+<script>
+    let id;
+
+    // let operation = document.getElementById("operation").value;
+    // if(operation === 1) {
+    //     openWindow('removeDone');
+    // }
+    // if(operation === 3) {
+    //     openWindow('addingDone');
+    // }
+    // if(operation === 4) {
+    //     openWindow('addingNotDone');
+    // }
+    // if(operation === 5) {
+    //     document.getElementById("accessibilityAlert").innerHTML = "Operacja została zakończona.<br>Dostępność została zmieniona.";
+    //     document.getElementById("accessibilityTitle").innerHTML = "Zakończono modyfikację dostępności";
+    //     openWindow('accessibilityWindowEnd');
+    // }
+
+
+    function remove(this_id) {
+        id = this_id;
+        openWindow('removeWindow');
+    }
+    function removeOK() {
+        // usuń towar
+        // closeWindow('removeWindow');
+        // openWindow('removeDone');
+        window.location.href='/catalog/remove?id='.concat(String(id));
+    }
+
+    let isAdd;
+
+    function accessibility(this_id, number) {
+        id = this_id;
+        document.getElementById('accessibilityNumber').value = number;
+        openWindow('accessibilityWindow');
+    }
+
+    function add() {
+        document.getElementById('giveOrTake').innerHTML = "Liczba dodawanych sztuk";
+        document.getElementById('giveOrTakeTitle').innerHTML = "Dodawana liczba";
+        document.getElementById('accessibilityGiveOrTakeNumber').value = 0;
+        isAdd = true;
+        closeWindow('accessibilityWindow');
+        openWindow('accessibilityAddOrRemove');
+    }
+    function take() {
+        isAdd = false;
+        document.getElementById('giveOrTake').innerHTML = "Liczba zabieranych sztuk sztuk";
+        document.getElementById('giveOrTakeTitle').innerHTML = "Zabierana liczba";
+        document.getElementById('accessibilityGiveOrTakeNumber').value = 0;
+        closeWindow('accessibilityWindow');
+        openWindow('accessibilityAddOrRemove');
+    }
+    function validate() {
+        var value = document.getElementById("accessibilityGiveOrTakeNumber").value;
+        if(value < 0) {
+            closeWindow('accessibilityAddOrRemove');
+            openWindow('errorWindow');
+        }
+        else {
+            if(isAdd) document.getElementById('accessibilityNumber').value -= -value;
+            else document.getElementById('accessibilityNumber').value -= value;
+            closeWindow('accessibilityAddOrRemove');
+            openWindow('accessibilityWindow');
+        }
+    }
+    function changeOK() {
+        // zmień dostępność
+        // document.getElementById("accessibilityAlert").innerHTML = "Operacja została zakończona.<br>Dostępność została zmieniona.";
+        // document.getElementById("accessibilityTitle").innerHTML = "Zakończono modyfikację dostępności";
+        // closeWindow('accessibilityWindow');
+        // openWindow('accessibilityWindowEnd');
+        document.getElementById("availabilityId").value = id;
+        document.getElementById("availability").submit();
+    }
+    function changeNotOK() {
+        // document.getElementById("accessibilityAlert").innerHTML = "Operacja została anulowana.<br>Dostępność nie została zmieniona.";
+        // document.getElementById("accessibilityTitle").innerHTML = "Anulowano modyfikację dostępności";
+        closeWindow('accessibilityWindow');
+        openWindow('accessibilityNotChanged');
+    }
+
+    function openWindow(name) {
+        var choice = document.getElementById(name);
+        choice.style.visibility = "visible";
+        choice.style.opacity = "1";
+    }
+    function closeWindow(name) {
+        var choice = document.getElementById(name);
+        choice.style.visibility = "hidden";
+        choice.style.opacity = "0";
+    }
+</script>
+
+</body>
+</html>

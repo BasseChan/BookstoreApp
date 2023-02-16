@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/Style.css?version=42">
+    <title>Modyfikacja danych</title>
+</head>
+<body>
+
+<table class="optionstable" style="table-layout: fixed; width: 90%">
+    <colgroup>
+        <col style="width: 33%">
+        <col style="width: 33%">
+        <col style="width: 33%">
+    </colgroup>
+    <tbody>
+    <tr>
+        <td><button class="exitbutton" th:onclick="|window.location.href='@{/catalog/book(id=${changedBook.book.getId()})}'|">Wyjście</button></td>
+        <td style="background: linear-gradient(transparent, white, transparent);"><h1>Modyfikuj dane książki</h1></td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+
+<form id="modification" method="post" action="#" th:action="@{/catalog/modifyBook}" th:object="${changedBook}">
+    <input type="hidden" th:field="*{book.availability}">
+    <input type="hidden" th:field="*{book.inOffer}">
+    <input type="hidden" th:field="*{book.id}" id="bookId">
+    <input type="hidden" th:field="*{categoriesPrev}">
+    <input type="hidden" th:field="*{authorsPrev}">
+<div class="centerside" style="margin-top: 10px">
+  <table class="datatable" style="table-layout: fixed; width: 1700px; margin: 20px">
+    <colgroup>
+      <col style="width: 500px">
+      <col style="width: 500px">
+      <col style="width: 700px">
+    </colgroup>
+    <tbody>
+    <tr>
+      <td colspan="2" style="font-size: 50px; text-align: center">
+        Tytuł: <input id="title" type="text" class="textInput" value="Autostopem przez Galaktykę" style="font-size: 40px; margin-left: 20px; width: 700px" th:field="*{book.title}">
+      </td>
+      <td rowspan="2" style="text-align: center; font-size: 36px">
+        Opis<br> <textarea id="description" cols="35" rows="20" style="font-size: 24px;" th:field="*{book.description}">Jubileuszowe wydanie kultowej książki Douglasa Adamsa, dla uczczenia 42. rocznicy pierwszej publikacj fenomenalnie zilustrowane przez wielokrotnie nagradzanego rysownika i autora książek dla dzieci, Chrisa Riddella.
+      </textarea>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><p>Kategorie</p><textarea th:field="*{categories}" id="categories" cols="25" rows="5" style="font-size: 24px">Kategoria 1
+Kategoria 2</textarea></td>
+      <td style="text-align: center"><p>Autorzy</p><textarea th:field="*{authors}" id="authors" cols="25" rows="5" style="font-size: 24px">Autor 1
+Autor 2</textarea></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</form>
+
+<button class="rightbutton" th:onclick="|window.location.href='@{/catalog/book_not_modified(id=${changedBook.book.getId()})}'|" style="margin-right: 200px">Anuluj</button>
+<button class="rightbutton ok" onclick="validate()">Zatwierdź</button>
+
+<div class="overlay" id="errorWindow">
+    <div class="wrapper">
+        <h2>Błędne dane</h2>
+        <a class="close" onclick="closeWindow('errorWindow')">&times;</a>
+        <div class="content">
+            <p id="errorMessage" style="font-size: 30px;"></p>
+            <button class="rightbutton ok" onclick="closeWindow('errorWindow')">OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openWindow(name) {
+        var choice = document.getElementById(name);
+        choice.style.visibility = "visible";
+        choice.style.opacity = "1";
+    }
+    function closeWindow(name) {
+        var choice = document.getElementById(name);
+        choice.style.visibility = "hidden";
+        choice.style.opacity = "0";
+    }
+
+    function validate() {
+        if(!document.getElementById('title').value) {
+            error.innerHTML = 'Podane dane są nieprawidłowe!\nKsiążka musi posiadać tytuł.\nProszę uzupełnić dane.';
+            openWindow('errorWindow');
+        }
+        else {
+            if(!document.getElementById('categories').value) {
+                error.innerHTML = 'Podane dane są nieprawidłowe!\nKsiążka musi posiadać co najmniej jedną kategorię.\nProszę uzupełnić dane.';
+                openWindow('errorWindow');
+            }
+            else {
+                // zmień dane książki
+                document.getElementById("modification").submit();
+                // location = 'VKsiazka.html#changingDone';
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

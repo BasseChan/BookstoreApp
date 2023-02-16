@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/Style.css?version=42">
+    <title>Nowa książka</title>
+</head>
+<body>
+
+<table class="optionstable" style="table-layout: fixed; width: 90%">
+    <colgroup>
+        <col style="width: 33%">
+        <col style="width: 33%">
+        <col style="width: 33%">
+    </colgroup>
+    <tbody>
+    <tr>
+        <td><button class="exitbutton" onclick="window.location.href='/catalog/'">Wyjście</button></td>
+        <td style="background: linear-gradient(transparent, white, transparent);"><h1>Dodaj książkę do katalogu</h1></td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+
+<form action="#" th:action="@{/catalog/newbook}" th:object="${newBook}" method="post" id="newBook">
+    <input type="hidden" id="priceCorrect" th:field="*{price}">
+    <div class="centerside" style="margin-top: 10px">
+        <table class="datatable" style="table-layout: fixed; width: 1700px; margin: 20px">
+            <colgroup>
+                <col style="width: 500px">
+                <col style="width: 500px">
+                <col style="width: 700px">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td colspan="2" style="font-size: 50px; text-align: center">
+                    Tytuł: <input th:field="*{book.title}" id="title" type="text" class="textInput" style="font-size: 40px; margin-left: 20px; width: 700px">
+                </td>
+                <td rowspan="4" style="text-align: center; font-size: 36px">
+                    Opis<br> <textarea th:field="*{book.description}" id="description" cols="35" rows="20" style="font-size: 24px;"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center"><p>Kategorie</p><textarea th:field="*{categories}" id="categories" cols="25" rows="5" style="font-size: 24px"></textarea></td>
+                <td style="text-align: center"><p>Autorzy</p><textarea th:field="*{authors}" id="authors" cols="25" rows="5" style="font-size: 24px"></textarea></td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Startowa dostępność:</td>
+                <td style="text-align: center"><input th:field="*{book.availability}" id="availability" type="number" class="numberInput" style="font-size: 24px; width: 350px" value="0"></td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Startowa cena:</td>
+                <td style="text-align: center"><input id="price" type="text" class="textInput" style="font-size: 24px; width: 350px; height: 40px; border-width: 4px; text-align: right"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+<!--    <p>Nazwa: <input type="text" th:field="*{name}" /></p>-->
+<!--    <p>Kod: <input type="text" th:field="*{code}" /></p>-->
+<!--    <p><input type="submit" value="Add" /> <input type="reset" value="Reset" /></p>-->
+</form>
+
+<button class="rightbutton" onclick="window.location.href='/catalog/new_book_not_added'" style="margin-right: 200px">Anuluj</button>
+<button class="rightbutton ok" onclick="validate()">Zatwierdź</button>
+
+<div class="overlay" id="errorWindow">
+    <div class="wrapper">
+        <h2>Błędne dane</h2>
+        <a class="close" onclick="closeWindow('errorWindow')">&times;</a>
+        <div class="content">
+            <p id="errorMessage" style="font-size: 30px;"></p>
+            <button class="rightbutton ok" onclick="closeWindow('errorWindow')">OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openWindow(name) {
+        var choice = document.getElementById(name);
+        choice.style.visibility = "visible";
+        choice.style.opacity = "1";
+    }
+    function closeWindow(name) {
+        var choice = document.getElementById(name);
+        choice.style.visibility = "hidden";
+        choice.style.opacity = "0";
+    }
+
+    let error = document.getElementById('errorMessage');
+
+    function correctPrice(price) {
+        price = price.replace('zł', '');
+        var priceSplit;
+        if(price.includes('.')) {
+            priceSplit = price.split('.');
+        }
+        else {
+            if(price.includes(',')) {
+                priceSplit = price.split(',');
+            }
+            else {
+                priceSplit = [price];
+            }
+        }
+        if(priceSplit.length > 2) return 0;
+        if(priceSplit[0].length === 0) return 0;
+        if(isNaN(priceSplit[0])) return 0;
+        if(Number(priceSplit[0]) <= 0) return 0;
+        if(priceSplit.length === 2) {
+            if(priceSplit[1].length === 0) return 0;
+            if(isNaN(priceSplit[1])) return 0;
+            if(Number(priceSplit[1]) < 0) return 0;
+        }
+        if(priceSplit.length === 2) {
+            return Number(priceSplit[0]) + 0.01 * Number((priceSplit[1] + '0').slice(0,2));
+        }
+        return Number(priceSplit[0]) * 1.0;
+    }
+
+    function validate() {
+        if(!document.getElementById('title').value) {
+            error.innerHTML = 'Podane dane są nieprawidłowe!\nKsiążka musi posiadać tytuł.\nProszę uzupełnić dane.';
+            openWindow('errorWindow');
+        }
+        else {
+            if(!document.getElementById('categories').value) {
+                error.innerHTML = 'Podane dane są nieprawidłowe!\nKsiążka musi posiadać co najmniej jedną kategorię.\nProszę uzupełnić dane.';
+                openWindow('errorWindow');
+            }
+            else {
+                var price = document.getElementById('price').value;
+                if(!price) {
+                    error.innerHTML = 'Podane dane są nieprawidłowe!\nKsiążka musi posiadać cenę.\nProszę uzupełnić dane.';
+                    openWindow('errorWindow');
+                }
+                else {
+                    var priceNumber = correctPrice(price);
+                    if(!priceNumber) {
+                        error.innerHTML = 'Podane cena jest nieprawidłowa!\nProszę poprawić wprowadzoną cenę.';
+                        openWindow('errorWindow');
+                    }
+                    else {
+                        document.getElementById("priceCorrect").value = priceNumber;
+                        document.getElementById("newBook").submit();
+                        // var categories = document.getElementById('categories').value.split(/\r?\n/);
+                        // var authors = document.getElementById('authors').value.split(/\r?\n/);
+                        // var availability = document.getElementById('availability').value;
+                        // var description = document.getElementById('description').value;
+                        // // dodaj nowy towar
+                        // location = 'VZarzadzanieKatalogiem.html#addingDone';
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

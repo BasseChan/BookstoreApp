@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/Style.css?version=42">
+  <title>Reklamacja</title>
+</head>
+<body>
+
+<table class="optionstable" style="table-layout: fixed; width: 90%">
+  <colgroup>
+    <col style="width: 33%">
+    <col style="width: 33%">
+    <col style="width: 33%">
+  </colgroup>
+  <tbody>
+  <tr>
+    <td><button class="exitbutton" onclick="window.location.href='/complaints/'">Wyjście</button></td>
+    <td style="background: linear-gradient(transparent, white, transparent);"><h1>Reklamacja</h1></td>
+    <td><button th:if="${complaint.complaintState.getStateName() == 'Oczekująca'}" class="rightbutton" onclick="openWindow('choice')">Rozpatrz</button></td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="leftside">
+  <table class="datatable" style="table-layout: fixed; width: 80%">
+    <colgroup>
+      <col style="width: 60%">
+      <col style="width: 50%">
+    </colgroup>
+    <tbody>
+    <tr>
+      <td>Reklamujący:</td>
+      <td th:text="${complaint.client.getFullName()}">Jan Kowalski</td>
+    </tr>
+    <tr>
+      <td>Data złożenia:</td>
+      <td th:text="${complaint.getDateOfComplaintPlacement_ddmmyyyy()}">10-12-2022</td>
+    </tr>
+    <tr>
+      <td>Data rozpatrzenia:</td>
+      <td th:text="${complaint.getDateOfComplaintHandling_ddmmyyyy()}">-</td>
+    </tr>
+    <tr>
+      <td>Stan:</td>
+      <td th:text="${complaint.getComplaintState().getStateName()}">nierozpatrzona</td>
+    </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 28px;text-align: center;">Treść</p>
+  <div class="whitebox">
+    <p th:text="${complaint.getDescription()}">Książka nie została dobrze zszyta i po otwarciu spora część kartek wypadła.</p>
+  </div>
+</div>
+
+<div class="rightside">
+  <p style="font-size: 40px; text-align: center">Zamówienie</p>
+  <table class="datatable" style="table-layout: fixed; width: 80%">
+    <colgroup>
+      <col style="width: 60%">
+      <col style="width: 50%">
+    </colgroup>
+    <tbody>
+    <tr>
+      <td>Data złożenia:</td>
+      <td th:text="${orderOnComplaint.getDateOfOrderPlacement_ddmmyyyy()}">10-12-2022</td>
+    </tr>
+    <tr>
+      <td>Kwota:</td>
+      <td th:text="${orderOnComplaint.getValueString()}">89.98zł</td>
+    </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 28px;text-align: center;">Pozycje</p>
+  <div class="whitebox">
+    <table class="inboxtable" style="table-layout: fixed; width: 560px">
+      <colgroup>
+        <col style="width: 375px">
+        <col style="width: 154px">
+      </colgroup>
+      <tbody>
+      <tr>
+        <th>Książka</th>
+        <th>Liczba sztuk</th>
+      </tr>
+      <tr th:each="position: ${positionsOfOrder}">
+        <td th:text="${position.getBookInPosition().getTitle()}">Autostopem przez Galaktykę</td>
+        <td th:text="${position.getQuantity()}">1</td>
+      </tr>
+<!--      <tr>-->
+<!--        <td>Pan Tadeusz</td>-->
+<!--        <td>1</td>-->
+<!--      </tr>-->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="overlay" id="choice">
+  <div class="wrapper">
+    <h2>Rozpatrzenie reklamacji</h2>
+    <a class="close" onclick="closeWindow('choice')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px; text-align: center">Zaakceptuj lub odrzuć reklamację</p>
+      <form action="#" th:action="@{/complaintAccepted(id=${complaint.getId()})}" method="post">
+        <button type="submit" class="leftbutton ok" style="margin-left: 80px" onclick="accept()">Akceptuj</button>
+      </form>
+      <button class="rightbutton" style="margin-right: 80px" onclick="decline()">Odrzuć</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="reason">
+  <div class="wrapper">
+    <h2>Powód odrzucenia</h2>
+    <a class="close" onclick="closeWindow('reason')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px; text-align: center">Podaj powód odrzucenia reklamacji</p>
+      <textarea name="reasonWhy" id="reasonWhy" style="position: relative; font-size: 24px" rows="10" cols="46"></textarea>
+      <button class="rightbutton" onclick="closeWindow('reason')">Anuluj</button>
+      <form action="#" th:action="@{/complaintDeclined(id=${complaint.getId()})}" method="post">
+        <button class="rightbutton ok" onclick="decline2()">Zatwierdź</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function accept() {
+    // zmień stan na zaakceptowana
+    closeWindow('choice');
+  }
+  function decline() {
+    closeWindow('choice');
+    openWindow('reason');
+  }
+
+  function decline2() {
+    // zmień stan na odrzucona
+    closeWindow('reason');
+    alert("Wysłano wiadomość na maila");
+  }
+
+  function openWindow(name) {
+    var choice = document.getElementById(name);
+    choice.style.visibility = "visible";
+    choice.style.opacity = "1";
+  }
+  function closeWindow(name) {
+    var choice = document.getElementById(name);
+    choice.style.visibility = "hidden";
+    choice.style.opacity = "0";
+  }
+
+</script>
+
+</body>
+</html>

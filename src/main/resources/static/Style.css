@@ -1,0 +1,230 @@
+.table  {border-collapse:collapse;border-color:#aaa;border-spacing:0;border-style:solid;border-width:1px;margin:0px auto;}
+.table tr{border-color:#aaa;border-spacing:100px;border-style:solid;border-width:1px;margin:50px;}
+.table td{background-color:#fff;border-color:#aaa;border-style:solid;border-width:0px;color:#333;
+    font-family:Arial, sans-serif;font-size:26px;text-align:left;vertical-align:top;overflow:hidden;padding:10px 5px;word-break:normal;}
+.table th{background-color:#77A9A9;border-color:#aaa;border-style:solid;border-width:0px;color:#fff;
+    font-family:Arial, sans-serif;font-size:28px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;text-align:left}
+
+.filtertable  {border-collapse:collapse;border-color:black;border-spacing:0;border-style:solid;border-width:1px;margin: 25px auto 0px;
+}
+.filtertable td{border-style:solid;border-width:0px;font-family:Arial, sans-serif;overflow:hidden;
+    padding:10px 5px;word-break:normal;}
+.filtertable th{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-weight:normal;
+    overflow:hidden;padding:10px 5px;word-break:normal;}
+.filtertable .tg-filter{background-color:#F1F7F7;font-size:30px;text-align:left;vertical-align:top}
+.filtertable .tg-title{background-color:#F1F7F7;font-size:30px;font-weight:bold;text-align:center;vertical-align:top}
+.filtertable .tg-content{background-color:#F1F7F7;}
+
+.datatable  {border:none;border-collapse:collapse;border-spacing:0;margin:0px auto;}
+.datatable td{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:28px;text-align:left;vertical-align:center;overflow:hidden;
+    padding:10px 5px;word-break:normal;}
+
+.optionstable {border:none;border-collapse:collapse;border-spacing:0;margin: 50px auto 0px; vertical-align: center;}
+
+.inboxtable  {border-collapse:collapse;border-color:#aaa;border-spacing:0;margin:0px auto;}
+.inboxtable td{background-color:#fff;;border-color:#aaa;border-style:solid;
+    border-width:0px;color:#333;font-family:Arial, sans-serif;font-size:20px;overflow:hidden;padding:10px 5px;
+    word-break:normal;text-align:left;vertical-align:top}
+.inboxtable th{background-color:lightgray;border-color:#aaa;border-style:solid;
+    border-width:0px;color:black;font-family:Arial, sans-serif;font-size:24px;overflow:hidden;
+    padding:10px 5px;word-break:normal;font-weight:bold;text-align:left;vertical-align:top}
+
+body {
+    background-image: url(/tlo2.jpeg?version=42);
+}
+
+.leftside, .rightside, .centerside{
+    margin:50px;
+    border-color: black;
+    border-width: 3px;
+    border-style: solid;
+    padding: 10px;
+    position: relative;
+    top:20px;
+    height: fit-content;
+    background-color:#F1F7F7;
+    min-height: 600px;
+}
+
+.ok {
+    background-color: #0080FF;
+    color: white;
+}
+
+/*.ok p {*/
+/*    color: white;*/
+/*}*/
+
+p {
+    font-family: Arial, sans-serif;
+}
+
+.leftside {
+    float: left;
+    width: 35%;
+    left: 8%;
+}
+
+.rightside {
+    float: right;
+    width: 35%;
+    right: 8%;
+}
+
+.centerside {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.whitebox {
+    margin:25px 50px 50px 50px;
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+    padding: 10px;
+    position: relative;
+    height: fit-content;
+    background-color: white;
+    min-height: 200px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.whitebox p {
+    font-size: 24px;
+}
+
+.exitbutton {
+    font-size: 30px;
+    text-align: right;
+    color: black;
+    height: 55px;
+    width: 200px;
+    float: left;
+    margin: 10px;
+    background-size: 80px;
+    padding-left: 16px;
+    border-width: 5px;
+    background: white url('exit.PNG') no-repeat center left;
+}
+
+.numberInput {
+    font-size: 30px;
+    text-align: right;
+    color: black;
+    height: 40px;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    border-width: 4px;
+}
+
+h1 {
+    font-size: 50px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    color: black;
+}
+
+.leftbutton {
+    font-size: 30px;
+    text-align: center;
+    /*color: black;*/
+    height: 55px;
+    width: 200px;
+    float: left;
+    margin: 10px;
+    border-width: 5px;
+    cursor: pointer;
+}
+
+.rightbutton {
+    font-size: 30px;
+    text-align: center;
+    /*color: black;*/
+    height: 55px;
+    width: 200px;
+    float: right;
+    margin: 10px;
+    border-width: 5px;
+    cursor: pointer;
+}
+
+.informbutton {
+    font-size: 24px;
+    text-align: center;
+    /*color: black;*/
+    height: auto;
+    width: auto;
+    border-width: 1px;
+    cursor: pointer;
+}
+
+.whitebox p {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.textInput {
+    font-size: 24px;
+    width: auto;
+    height: auto;
+    border-width: 5px;
+}
+
+.dateInput {
+    height: 40px;
+    width: 500px;
+    font-size: 30px;
+    border-width: 5px;
+    text-align: center;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.8);
+    visibility: hidden;
+    opacity: 0;
+}
+.overlay:target{
+    visibility: visible;
+    opacity: 1;
+}
+.wrapper{
+    margin: 70px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
+}
+.wrapper h2{
+    margin-top: 0;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+.wrapper .close{
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+.wrapper .content{
+    max-height: 30%;
+    overflow: auto;
+}
+
+button, .leftside, .rightside, .centerside, .whitebox, .table {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 7px;
+}

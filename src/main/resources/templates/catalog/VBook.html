@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/Style.css?version=42">
+    <title>Strona książki</title>
+</head>
+<body>
+
+<table class="optionstable" style="table-layout: fixed; width: 90%">
+  <colgroup>
+    <col style="width: 40%">
+    <col style="width: 60%">
+  </colgroup>
+  <tbody>
+  <tr>
+    <td><button class="exitbutton" onclick="window.location.href='/catalog/'">Wyjście</button></td>
+    <td>
+      <button class="rightbutton" style="width: 300px" th:onclick="|remove('${book.getId()}')|">Usuń książkę</button>
+      <button class="rightbutton" style="width: 300px" th:onclick="|accessibility('${book.getId()}')|">Zmień dostępność</button>
+      <button class="rightbutton" style="width: 300px" th:onclick="|window.location.href='@{/catalog/modifyBook(id=${book.getId()})}'|">Modyfikuj dane</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="centerside">
+  <table class="datatable" style="table-layout: fixed; width: 1700px">
+    <colgroup>
+      <col style="width: 250px">
+      <col style="width: 375px">
+      <col style="width: 375px">
+      <col style="width: 600px">
+    </colgroup>
+    <tbody>
+    <tr>
+      <td colspan="4"><h1 th:text="${book.getTitle()}">Autostopem przez Galaktykę</h1></td>
+    </tr>
+    <tr>
+      <td style="text-align: center" th:utext="'Aktualna cena:<br />' + ${book.getActualPrice().getValueString()}">Aktualna cena:<br>39.99zł</td>
+      <td style="text-align: center;" rowspan="2">
+        Kategorie<br>
+        <div style="text-align: left; margin-left: 10px; margin-right: 10px; margin-bottom: 10px" class="whitebox">
+          <p style="margin-top: 5px; margin-bottom: 5px" th:each="category: ${book.getCategory_bookList()}" th:text="${category.getCategoryInCategory_Book().getCategoryName()}"></p>
+<!--          <p th:text="${book.getCategoriesAsString()}"></p>-->
+<!--          <p>sci-fi</p>-->
+<!--          <p>kosmos</p>-->
+        </div>
+      </td>
+      <td style="text-align: center" rowspan="2">
+        Autorzy<br>
+        <div style="text-align: left; margin-left: 10px; margin-right: 10px; margin-bottom: 10px" class="whitebox">
+          <p style="margin-top: 5px; margin-bottom: 5px" th:each="author: ${book.getAuthor_bookList()}" th:text="${author.getAuthorInAuthor_Book().getFullName()}"></p>
+<!--          <p th:text="${book.getAuthorsAsString()}"></p>-->
+<!--          <p>Autor 1</p>-->
+<!--          <p>Autor 2</p>-->
+        </div>
+      </td>
+      <td style="vertical-align: top" rowspan="3"><br>
+        <div style="text-align: left; min-height: 500px" class="whitebox">
+          <p style="text-align: center; font-size: 30px; font-weight: bold;">Opis</p>
+          <p th:text="${book.getDescription()}">Jubileuszowe wydanie kultowej książki Douglasa Adamsa, dla uczczenia 42. rocznicy pierwszej publikacji
+            fenomenalnie zilustrowane przez wielokrotnie nagradzanego rysownika i autora książek dla dzieci, Chrisa Riddella.</p>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align: center" th:utext="'Dostępność:<br />' + ${book.getAvailability()}">Dostępność:<br>42</td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <div class="whitebox" style="margin-top: 0; width: 92%">
+          <table class="datatable" style="table-layout: fixed; width: 925px">
+            <colgroup>
+              <col style="width: 300px">
+              <col style="width: 500px">
+            </colgroup>
+            <tbody>
+            <tr>
+              <td><h1 style="font-size: 36px">Historia cen książki</h1></td>
+              <td>
+                <button class="rightbutton" style="width: auto; height: auto; font-size: 28px" onclick="newPromPrice()">Nowa promocja</button>
+                <button class="rightbutton" style="width: auto; height: auto; font-size: 28px" onclick="newPrice()">Nowa cena</button>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <table class="table" style="table-layout: fixed; width: 100%" id="prices">
+                  <colgroup>
+                    <col style="width: 400px">
+                    <col style="width: 200px">
+                    <col style="width: 200px">
+                    <col style="visibility: hidden; width: 0;">
+                    <col style="visibility: hidden; width: 0;">
+                  </colgroup>
+                  <tbody>
+                  <tr>
+                    <th>Okres obowiązywania</th>
+                    <th>Wysokość</th>
+                    <th>Czy promocja</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                  <tr th:each="price: ${book.getPricesSorted()}">
+                    <td th:text="${price.getTimePeriod()}">05.11.2018 - 09.12.2022</td>
+                    <td th:text="${price.getValueString()}">49.99zł</td>
+                    <td th:if="${price.getAtDiscount()}">PROMOCJA!</td>
+                    <td th:unless="${price.getAtDiscount()}"></td>
+                    <td style="font-size: 0" th:text="${price.getStartDateString()}"></td>
+                    <td style="font-size: 0" th:text="${price.value}"></td>
+                  </tr>
+<!--                  <tr>-->
+<!--                    <td>10.12.2022 - 24.12.2022</td>-->
+<!--                    <td>20.99zł</td>-->
+<!--                    <td>PROMOCJA!</td>-->
+<!--                  </tr>-->
+<!--                  <tr>-->
+<!--                    <td>25.12.2022 - </td>-->
+<!--                    <td>39.99zł</td>-->
+<!--                    <td></td>-->
+<!--                  </tr>-->
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="overlay" id="removeWindow">
+  <div class="wrapper">
+    <h2>Powód odrzucenia</h2>
+    <a class="close" onclick="closeWindow('removeWindow')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Czy na pewno chcesz usunąć tę książkę z katalogu? Książka zostanie wycofana ze sprzedaży.<br>
+        Operacja jest nieodwracalna!</p>
+      <button class="rightbutton" onclick="closeWindow('removeWindow'); openWindow('removeNotDone')">Anuluj</button>
+      <button class="rightbutton ok" onclick="removeOK()">OK</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="removeNotDone">
+  <div class="wrapper">
+    <h2>Anulowano usunięcie</h2>
+    <a class="close" onclick="closeWindow('removeNotDone')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Operacja została anulowana.<br>Książka nie została usunięta z katalogu.</p>
+      <button class="rightbutton ok" onclick="closeWindow('removeNotDone')">OK</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="accessibilityWindow">
+  <div class="wrapper">
+    <h2>Modyfikacja dostępności</h2>
+    <a class="close" onclick="closeWindow('accessibilityWindow')">&times;</a>
+    <div class="content">
+      <table class="datatable" style="table-layout: fixed; width: 80%">
+        <colgroup>
+          <col style="width: 60%">
+          <col style="width: 50%">
+        </colgroup>
+        <tbody>
+        <tr>
+          <td rowspan="2">
+            <h2>Zmień dane</h2>
+
+            <form id="availability" method="post" action="/catalog/bookAvailability" th:object="${book}">
+              <input th:field="*{title}" type="hidden">
+              <input th:field="*{inOffer}" type="hidden">
+              <input th:field="*{id}" type="hidden">
+              <input th:field="*{description}" type="hidden">
+              <input class="numberInput" type="number" id="accessibilityNumber" onchange="actualize()" th:field="*{availability}">
+            </form>
+
+          </td>
+          <td><button class="rightbutton" onclick="add()">+ Dodaj</button></td>
+        </tr>
+        <tr>
+          <td><button class="rightbutton" onclick="take()">- Zabierz</button></td>
+        </tr>
+        </tbody>
+      </table>
+      <button class="rightbutton" onclick="changeNotOK()">Anuluj</button>
+      <button class="rightbutton ok" onclick="changeOK()">OK</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="accessibilityAddOrRemove">
+  <div class="wrapper">
+    <h2 id="giveOrTakeTitle">Modyfikacja dostępności</h2>
+    <a class="close" onclick="closeWindow('accessibilityAddOrRemove'); openWindow('accessibilityWindow')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px; text-align: center" id="giveOrTake"></p>
+      <input class="numberInput" style="width: 97%" type="number" id="accessibilityGiveOrTakeNumber">
+      <button class="rightbutton ok" onclick="validate()">OK</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="errorWindow">
+  <div class="wrapper">
+    <h2>Błędna wartość</h2>
+    <a class="close" onclick="closeWindow('errorWindow'); openWindow('accessibilityWindow')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Podana wartość jest niepoprawna!<br>Dostępność nie została zmieniona.</p>
+      <button class="rightbutton ok" onclick="closeWindow('errorWindow'); openWindow('accessibilityWindow')">OK</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="accessibilityChanged" style="visibility: visible; opacity: 1" th:if="${operation} == 5">
+  <div class="wrapper">
+    <h2>Zakończono modyfikację dostępności</h2>
+    <a class="close" onclick="closeWindow('accessibilityChanged')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Operacja została zakończona.<br>Dostępność została zmieniona.</p>
+      <button class="rightbutton ok" onclick="closeWindow('accessibilityChanged')">OK</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="accessibilityNotChanged">
+  <div class="wrapper">
+    <h2>Anulowano modyfikację dostępności</h2>
+    <a class="close" onclick="closeWindow('accessibilityNotChanged')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Operacja została anulowana.<br>Dostępność nie została zmieniona.</p>
+      <button class="rightbutton ok" onclick="closeWindow('accessibilityNotChanged')">OK</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="changingDone" style="visibility: visible; opacity: 1" th:if="${operation} == 1">
+  <div class="wrapper">
+    <h2>Zakończono modyfikację</h2>
+    <a class="close" onclick="closeWindow('changingDone')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Operacja została zakończona.<br>Dane książki zostały zaktualizowane.</p>
+      <button class="rightbutton ok" onclick="closeWindow('changingDone')">OK</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="changingNotDone" style="visibility: visible; opacity: 1" th:if="${operation} == 2">
+  <div class="wrapper">
+    <h2>Anulowano modyfikajcę</h2>
+    <a class="close" onclick="closeWindow('changingNotDone')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Operacja została anulowana.<br>Dane książki nie uległy zmianie.</p>
+      <button class="rightbutton ok" onclick="closeWindow('changingNotDone')">OK</button>
+    </div>
+  </div>
+</div>
+
+<form method="post" action="/catalog/newPrice" id="normPriceForm" th:object="${normPrice}">
+  <input type="hidden" th:field="*{value}" id="normPriceValue">
+  <input type="hidden" th:field="*{bookId}">
+  <input type="hidden" th:field="*{dateTo}">
+  <div class="overlay" id="normDate">
+    <div class="wrapper">
+      <h2>Początek ceny</h2>
+      <a class="close" onclick="closeWindow('normDate')">&times;</a>
+      <div class="content" style="text-align: center">
+        <p style="font-size: 30px; text-align: center">Podaj początek obowiązywania ceny</p>
+        <input id="normStartDate" type="date" class="dateInput" th:field="*{dateFrom}"><br><br>
+        <button type="button" class="rightbutton" onclick="normCancel('normDate')">Anuluj</button>
+        <button type="button" class="rightbutton ok" onclick="normVal1()">Zatwierdź</button>
+<!--        <button type="button" class="rightbutton" onclick="closeWindow('normDate')">Anuluj</button>-->
+<!--        <button type="button" class="rightbutton" onclick="closeWindow('normDate')">Zatwierdź</button>-->
+      </div>
+    </div>
+  </div>
+  <div class="overlay" id="normPrice">
+    <div class="wrapper">
+      <h2>Nowa cena</h2>
+      <a class="close" onclick="closeWindow('normPrice')">&times;</a>
+      <div class="content" style="text-align: center">
+        <table class="datatable" style="table-layout: fixed; width: 80%">
+          <colgroup>
+            <col style="width: 80%">
+            <col style="width: 20%">
+          </colgroup>
+          <tbody>
+          <tr>
+            <td>Poprzednia cena:</td>
+            <td id="prevNormPriceValue">39.99zł</td>
+          </tr>
+          <tr>
+            <td>Aktualnie:</td>
+            <td th:text="${book.getActualPrice().getValueString()}">39.99zł</td>
+          </tr>
+          </tbody>
+        </table>
+        <p style="text-align: center; font-size: 30px">Podaj nową cenę</p>
+        <p style="text-align: center">
+          <input id="price" type="text" class="textInput" style="font-size: 24px; width: 500px; height: 40px; border-width: 4px; text-align: right"></p>
+        <button type="button" class="rightbutton" onclick="normCancel('normPrice')">Anuluj</button>
+        <button type="button" class="rightbutton ok" onclick="normVal2()">Zatwierdź</button>
+      </div>
+    </div>
+  </div>
+  <div class="overlay" id="normPriceChoice">
+    <div class="wrapper">
+      <h2>Dodanie nowej ceny</h2>
+      <a class="close" onclick="closeWindow('normPriceChoice')">&times;</a>
+      <div class="content" style="text-align: center">
+        <p style="font-size: 30px; text-align: center">Czy na pewno chcesz dodać nową cenę?<br>Nowa cena zastąpi wszystkie ceny obowiązujące po dacie jej rozpoczęcia</p>
+        <button type="button" class="rightbutton" onclick="normCancel('normPriceChoice')">Anuluj</button>
+        <button type="button" class="rightbutton ok" onclick="normDone()">Zatwierdź</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<form method="post" action="/catalog/newPromotion" id="promPriceForm" th:object="${normPrice}">
+  <input type="hidden" th:field="*{value}" id="promPriceValue">
+  <input type="hidden" th:field="*{bookId}">
+  <div class="overlay" id="promDate">
+    <div class="wrapper">
+      <h2>Okres promocji</h2>
+      <a class="close" onclick="closeWindow('promDate')">&times;</a>
+      <div class="content" style="text-align: center">
+        <p style="font-size: 30px; text-align: center">Podaj okres obowiącywania promocji</p>
+        <table class="datatable" style="table-layout: fixed; width: 80%">
+          <colgroup>
+            <col style="width: 37%">
+            <col style="width: 63%">
+          </colgroup>
+          <tbody>
+          <tr>
+            <td>Początek:</td>
+            <td>
+              <input style="width: 300px" id="promStartDate" type="date" class="dateInput" th:field="*{dateFrom}">
+            </td>
+          </tr>
+          <tr>
+            <td>Koniec:</td>
+            <td>
+              <input style="width: 300px" id="promEndDate" type="date" class="dateInput" th:field="*{dateTo}">
+            </td>
+          </tr>
+          </tbody>
+        </table><br>
+        <button type="button" class="rightbutton" onclick="promCancel('promDate')">Anuluj</button>
+        <button type="button" class="rightbutton ok" onclick="promVal1()">Zatwierdź</button>
+      </div>
+    </div>
+  </div>
+  <div class="overlay" id="promPrice">
+    <div class="wrapper">
+      <h2>Cena promocyjna</h2>
+      <a class="close" onclick="closeWindow('promPrice')">&times;</a>
+      <div class="content" style="text-align: center">
+        <table class="datatable" style="table-layout: fixed; width: 80%">
+          <colgroup>
+            <col style="width: 80%">
+            <col style="width: 20%">
+          </colgroup>
+          <tbody>
+          <tr>
+            <td>Przed promocją:</td>
+            <td id="prevPromPriceValue">39.99zł</td>
+          </tr>
+          <tr>
+            <td>Aktualnie:</td>
+            <td th:text="${book.getActualPrice().getValueString()}">39.99zł</td>
+          </tr>
+          </tbody>
+        </table>
+        <p style="text-align: center; font-size: 30px">Podaj cenę promocyjną</p>
+        <p style="text-align: center">
+          <input id="priceWithProm" type="text" class="textInput" style="font-size: 24px; width: 500px; height: 40px; border-width: 4px; text-align: right"></p>
+        <button type="button" class="rightbutton" onclick="promCancel('promPrice')">Anuluj</button>
+        <button type="button" class="rightbutton ok" onclick="promVal2()">Zatwierdź</button>
+      </div>
+    </div>
+  </div>
+  <div class="overlay" id="promPriceChoice">
+    <div class="wrapper">
+      <h2>Dodanie promocji</h2>
+      <a class="close" onclick="closeWindow('promPriceChoice')">&times;</a>
+      <div class="content">
+        <p style="font-size: 30px">Czy na pewno chcesz dodać nową promocję?<br>Promocja będzie obowiązywać w podanym okresie, zastępując wcześniej obowiązujące w tym okresie ceny.</p>
+        <button type="button" class="rightbutton" onclick="promCancel('promPriceChoice')">Anuluj</button>
+        <button type="button" class="rightbutton ok" onclick="promDone()">Zatwierdź</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="overlay" id="error">
+  <div class="wrapper">
+    <h2>Błędne dane</h2>
+    <a class="close" onclick="errorFunction()">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;" id="errorC"></p>
+      <button class="rightbutton ok" onclick="errorFunction()">OK</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="priceEnd">
+  <div class="wrapper">
+    <h2 id="priceT"></h2>
+    <a class="close" onclick="closeWindow('priceEnd')">&times;</a>
+    <div class="content">
+      <p id="priceC" style="font-size: 30px;"></p>
+      <button class="rightbutton ok" onclick="closeWindow('priceEnd')">OK</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="priceAdded" style="visibility: visible; opacity: 1" th:if="${operation} == 3">
+  <div class="wrapper">
+    <h2>Zakończono dodawanie nowej ceny</h2>
+    <a class="close" onclick="closeWindow('priceAdded')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Operacja została zakończona.<br>Nowa cena została dodana i zastąpiła ceny obowiązujące po jej rozpoczęciu.</p>
+      <button class="rightbutton ok" onclick="closeWindow('priceAdded')">OK</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="promAdded" style="visibility: visible; opacity: 1" th:if="${operation} == 4">
+  <div class="wrapper">
+    <h2>Zakończono dodawanie promocji</h2>
+    <a class="close" onclick="closeWindow('promAdded')">&times;</a>
+    <div class="content">
+      <p style="font-size: 30px;">Operacja została zakończona.<br>Promocja została dodana i zastąpiła obowiązujące w jej okresie ceny.</p>
+      <button class="rightbutton ok" onclick="closeWindow('promAdded')">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function getPrevPrice(date) {
+    var table = document.getElementById("prices");
+    var tr = table.getElementsByTagName("tr");
+    var td, i;
+    for(i = tr.length-1; i>=1; i--) {
+      td = tr[i].getElementsByTagName("td");
+      if(td[3].innerText < date) {
+        return [td[4].innerText, td[1].innerText];
+      }
+    }
+    return [tr[1].getElementsByTagName("td")[4].innerText, tr[1].getElementsByTagName("td")[1].innerText];
+  }
+
+  function actualizePriceBeforeNorm() {
+    var date = document.getElementById('normStartDate').value;
+    var value = getPrevPrice(date);
+    document.getElementById('prevNormPriceValue').innerText = value[1];
+  }
+
+  let beforePromVal;
+
+  function actualizePriceBeforeProm() {
+    var date = document.getElementById('promStartDate').value;
+    var value = getPrevPrice(date);
+    document.getElementById('prevPromPriceValue').innerText = value[1];
+    beforePromVal = value[0];
+  }
+
+  let id;
+
+  function remove(this_id) {
+    id = this_id;
+    openWindow('removeWindow');
+  }
+  function removeOK() {
+    window.location.href='/catalog/remove?id='.concat(String(id));
+  }
+
+  let isAdd;
+
+  function accessibility(this_id) {
+    id = this_id;
+    openWindow('accessibilityWindow');
+  }
+  function add() {
+    document.getElementById('giveOrTake').innerHTML = "Liczba dodawanych sztuk";
+    document.getElementById('giveOrTakeTitle').innerHTML = "Dodawana liczba";
+    document.getElementById('accessibilityGiveOrTakeNumber').value = 0;
+    isAdd = true;
+    closeWindow('accessibilityWindow');
+    openWindow('accessibilityAddOrRemove');
+  }
+  function take() {
+    isAdd = false;
+    document.getElementById('giveOrTake').innerHTML = "Liczba zabieranych sztuk sztuk";
+    document.getElementById('giveOrTakeTitle').innerHTML = "Zabierana liczba";
+    document.getElementById('accessibilityGiveOrTakeNumber').value = 0;
+    closeWindow('accessibilityWindow');
+    openWindow('accessibilityAddOrRemove');
+  }
+  function validate() {
+    var value = document.getElementById("accessibilityGiveOrTakeNumber").value;
+    if(value < 0) {
+      closeWindow('accessibilityAddOrRemove');
+      openWindow('errorWindow');
+    }
+    else {
+      if(isAdd) document.getElementById('accessibilityNumber').value -= -value;
+      else document.getElementById('accessibilityNumber').value -= value;
+      closeWindow('accessibilityAddOrRemove');
+      openWindow('accessibilityWindow');
+    }
+  }
+  function changeOK() {
+    document.getElementById("availability").submit();
+  }
+  function changeNotOK() {
+    closeWindow('accessibilityWindow');
+    openWindow('accessibilityNotChanged');
+  }
+
+  function openWindow(name) {
+    var choice = document.getElementById(name);
+    choice.style.visibility = "visible";
+    choice.style.opacity = "1";
+  }
+  function closeWindow(name) {
+    var choice = document.getElementById(name);
+    choice.style.visibility = "hidden";
+    choice.style.opacity = "0";
+  }
+
+  let curWindow;
+  function errorFunction() {
+    closeWindow('error');
+    openWindow(curWindow);
+  }
+
+  function today() {
+    let yourDate = new Date();
+    return yourDate.toISOString().split('T')[0];
+  }
+
+  // function getDate(date) {
+  //   var d = new Date(date),
+  //           month = '' + (d.getMonth() + 1),
+  //           day = '' + d.getDate(),
+  //           year = d.getFullYear();
+  //
+  //   if (month.length < 2)
+  //     month = '0' + month;
+  //   if (day.length < 2)
+  //     day = '0' + day;
+  //
+  //   return [year, month, day].join('-');
+  // }
+
+  let error = document.getElementById('errorC');
+  function normVal1() {
+    var date = document.getElementById('normStartDate').value;
+    if(date < today()) {
+      error.innerHTML = "Podane dane są nieprawidłowe!<br>Początek ceny nie może mieć przeszłej daty.";
+      curWindow = 'normDate';
+      closeWindow('normDate');
+      openWindow('error');
+    }
+    else {
+      actualizePriceBeforeNorm();
+      closeWindow('normDate');
+      openWindow('normPrice');
+    }
+  }
+
+  function correctPrice(price) {
+    price = price.replace('zł', '');
+    var priceSplit;
+    if(price.includes('.')) {
+      priceSplit = price.split('.');
+    }
+    else {
+      if(price.includes(',')) {
+        priceSplit = price.split(',');
+      }
+      else {
+        priceSplit = [price];
+      }
+    }
+    if(priceSplit.length > 2) return 0;
+    if(priceSplit[0].length === 0) return 0;
+    if(isNaN(priceSplit[0])) return 0;
+    if(Number(priceSplit[0]) < 0) return 0;
+    if(priceSplit.length === 2) {
+      if(priceSplit[1].length === 0) return 0;
+      if(isNaN(priceSplit[1])) return 0;
+      if(Number(priceSplit[1]) < 0) return 0;
+    }
+    var priceNumber;
+    if(priceSplit.length === 2) {
+      priceNumber = Number(priceSplit[0]) + 0.01 * Number((priceSplit[1] + '0').slice(0,2));
+      if(priceNumber === 0.0) return 0;
+      return priceNumber;
+    }
+    priceNumber = Number(priceSplit[0]);
+    if(priceNumber === 0.0) return 0;
+    return priceNumber;
+  }
+  let priceNumber;
+  function normVal2() {
+    var price = document.getElementById('price').value;
+    priceNumber = correctPrice(price);
+    if(!priceNumber) {
+      error.innerHTML = "Podana cena jest nieprawidłowa!<br>Proszę poprawić wprowadzoną cenę.";
+      curWindow = 'normPrice';
+      closeWindow('normPrice');
+      openWindow('error');
+    }
+    else {
+      closeWindow('normPrice');
+      openWindow('normPriceChoice');
+    }
+  }
+
+  function newPrice() {
+    document.getElementById('normStartDate').value = today();
+    openWindow('normDate');
+  }
+
+  function normCancel(page) {
+    closeWindow(page);
+    document.getElementById('priceC').innerHTML = "Operacja została anulowana.<br>Cena nie została dodana.";
+    document.getElementById('priceT').innerHTML = "Anulowano dodawanie nowej ceny";
+    openWindow('priceEnd');
+  }
+  function normDone() {
+    document.getElementById("normPriceValue").value = priceNumber;
+    document.getElementById("normPriceForm").submit();
+  }
+
+  function newPromPrice() {
+    document.getElementById('promStartDate').value = today();
+    openWindow('promDate');
+  }
+  function promVal1() {
+    var date = document.getElementById('promStartDate').value;
+    var date2 = document.getElementById('promEndDate').value;
+    if(date < today()) {
+      error.innerHTML = "Podane dane są nieprawidłowe!<br>Początek promocji nie może mieć przeszłej daty.";
+      curWindow = 'promDate';
+      closeWindow('promDate');
+      openWindow('error');
+    }
+    else {
+      if(date > date2) {
+        error.innerHTML = "Podane dane są nieprawidłowe!<br>Kociec promocji musi być późniejszy od początkowej daty.";
+        curWindow = 'promDate';
+        closeWindow('promDate');
+        openWindow('error');
+      }
+      else {
+        actualizePriceBeforeProm();
+        closeWindow('promDate');
+        openWindow('promPrice');
+      }
+    }
+  }
+  function promVal2() {
+    var price = document.getElementById('priceWithProm').value;
+    priceNumber = correctPrice(price);
+    if(!priceNumber) {
+      error.innerHTML = "Podana cena jest nieprawidłowa!<br>Proszę poprawić wprowadzoną cenę.";
+      curWindow = 'promPrice';
+      closeWindow('promPrice');
+      openWindow('error');
+    }
+    else {
+      if(priceNumber >= beforePromVal) {
+        error.innerHTML = "Podana cena jest nieprawidłowa!<br>Podana cena musi być niższa od poprzedzającej ją ceny.";
+        curWindow = 'promPrice';
+        closeWindow('promPrice');
+        openWindow('error');
+      }
+      else {
+        closeWindow('promPrice');
+        openWindow('promPriceChoice');
+      }
+    }
+  }
+  function promCancel(page) {
+    closeWindow(page);
+    document.getElementById('priceC').innerHTML = "Operacja została anulowana.<br>Promocja nie została dodana.";
+    document.getElementById('priceT').innerHTML = "Anulowano promocję";
+    openWindow('priceEnd');
+  }
+  function promDone() {
+    document.getElementById("promPriceValue").value = priceNumber;
+    document.getElementById("promPriceForm").submit();
+  }
+</script>
+
+</body>
+</html>
